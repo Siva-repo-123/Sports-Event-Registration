@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sports Enroll</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <style>
+    #myTable{
+      margin: auto;
+      border: 1px solid white;
+      /* width: 600px; */
+      box-sizing: border-box;
+      text-align: left;
+    }
+    #myTable td{
+      padding: 5px;
+    }
+    #myTable thead tr th:not(:first-child){
+      text-align: start;
+      padding: 2px 5px;;
+    }
+    #myTable td:first-child{
+      text-align: center;
+      padding:5px;
+    }
+    th{
+      padding:7px;
+    }
+    #myTable td:last-child{
+      text-align: center;
+      width: 40px;
+      
+    }
+    .myTable1{
+      margin: auto;
+      box-sizing: border-box;
+      border-top: 1px solid #6cc3f3;
+      border-bottom: 1px solid #6cc3f3;
+      text-align:start;
+      width: 510px;
+    }
+    /* #myButton{
+      display: none;
+    } */
+  </style>
+</head>
+<body>
+  <table id="myTable">
+    <thead style="background-color: #dde3e6;">
+      <tr>
+        <th>Sr.</th>
+        <th>Name</th>
+        <th>Sport/Event</th>
+        <th>Entry Fee</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody style="background-color: #f4f7f6;">
+      <tr>
+        <td style="font-weight: bold;">1</td>
+        <td><input type="text" style="height: 20px;"></td>
+        <td>
+          <select class="sports" onchange="updateAmount(this)" style="width: 120px;height: 25px;" >
+            <option value=""></option>
+            <option value="cricket">Cricket</option>
+            <option value="badminton">Badminton</option>
+          </select>
+        </td>
+        <td><input type="text" class="amount" style="width: 80px;height: 20px;"></td>
+        <td>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <table class="myTable1" style="margin-top: 40px;">
+    <tr>
+      <td style="width:50px;">Total</td>
+      <td colspan="3"><span id="numRows"></span> Participants</td>
+      <td style="text-align: center;">Rs. <span id="total-price" value=""></span> </td>
+    </tr>
+    
+  </table>
+  <table class="myTable1" style="border: none;margin-top: 5px;">
+    <tr>
+      <td colspan="5" style="text-align: end;"><button onclick="cloneRow()" style="background-color:#0084e5;color: white;border: 1px solid #6cc3f3;width: 100px;height: 25px;">+ Add Row</button></td>
+    </tr>
+  </table>
+
+
+  
+  <script>
+function updateSerialNumbers(table) {
+  const tbody = table.tBodies[0];
+  const rows = tbody.rows;
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    row.cells[0].innerHTML = i + 1;
+  }
+}
+function updateNumRows(table) {
+  const numRows = table.tBodies[0].rows.length;
+  const numRowsEl = document.getElementById("numRows");
+  numRowsEl.innerHTML = numRows;
+}
+
+function updateTotalPrice() {
+  let totalPriceSpan = document.getElementById('total-price');
+  let priceCell = document.querySelectorAll(".amount");
+  let totalPrice = 0;
+  for (let i = 0; i < priceCell.length; i++) {        
+    let price = Number(priceCell[i].value);
+    totalPrice += price;
+  }  
+  totalPriceSpan.innerHTML= Number(totalPrice);
+}
+
+
+function updateAmount(sel) {
+  let row = sel.closest('tr');
+  let amountEl = row.querySelector('.amount');
+  let selectedValue = sel.value;
+  if (selectedValue == 'cricket') {
+    amountEl.value = 200;
+    } else if (selectedValue == 'badminton') {
+      amountEl.value = 125;
+    } else if (selectedValue == "") {
+      amountEl.value ="";
+    }
+    updateTotalPrice();
+}
+let table = document.getElementById('myTable');
+let selectEls = table.querySelectorAll('select');
+selectEls.forEach(function(selectEl) {
+  selectEl.addEventListener('change', function() {
+    let row = selectEl.closest('tr');
+    updateAmount(row);
+    updateTotalPrice();
+  });
+});
+function cloneRow() {
+  const table = document.getElementById("myTable");
+  const lastRow = table.rows[table.rows.length - 1];
+  const newRow = lastRow.cloneNode(true);
+  newRow.querySelector(".amount").value=""
+  newRow.cells[4].innerHTML='<button id="myButton" style="background-color: red;width: 20px;height: 20px;border-radius: 50%;border: none;" onclick="deleteRow(this)">X</button>';
+  table.tBodies[0].appendChild(newRow);
+  updateSerialNumbers(table);
+  updateNumRows(table); 
+}
+
+let totalPrice = 0;
+function deleteRow(button) {
+  const row = button.closest('tr');
+  const table = document.getElementById("myTable");
+  const tbody = table.tBodies[0];
+  const price = parseInt(row.cells[3].innerHTML);
+  totalPrice -= price;
+  tbody.removeChild(row);
+  updateSerialNumbers(table);
+  updateNumRows(table);
+  updateAmount(row);
+  updateTotalPrice();
+}
+
+ 
+  </script>
+   
+</body>
+</html>
